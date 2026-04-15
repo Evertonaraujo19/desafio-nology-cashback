@@ -5,7 +5,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from fastapi.middleware.cors import CORSMiddleware
 
 # Banco de dados de Produção (Supabase)
-DATABASE_URL = "DATABASE_URL = "postgresql://postgres:shaukan191099@db.wtwgxjxshhfacztnlduy.supabase.co:5432/postgres?sslmode=require""
+DATABASE_URL = "postgresql://postgres:shaukan191099@db.wtwgxjxshhfacztnlduy.supabase.co:5432/postgres?sslmode=require"
 engine = create_engine(DATABASE_URL) # Tiramos o connect_args
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
