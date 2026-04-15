@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Cashback</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+    <h1>Cálculo de Cashback</h1>
+    
+    <label>Valor da Compra:</label>
+    <input type="number" id="valor_original" placeholder="Ex: 600"><br><br>
+
+    <label>Desconto (%):</label>
+    <input type="number" id="desconto" placeholder="Ex: 10" value="0"><br><br>
+
+    <label>Tipo de Cliente:</label>
+    <select id="is_vip">
+        <option value="false">Padrão</option>
+        <option value="true">VIP</option>
+    </select><br><br>
+
+    <button onclick="calcular()" style="padding: 10px 20px; cursor: pointer;">Calcular Cashback</button>
+
+    <h2>Resultado: <span id="resultado">R$ 0.00</span></h2>
+
+    <hr>
+
+    <h3>Histórico de Consultas (Seu IP)</h3>
+    <ul id="historico"></ul>
+
+    <script>
+        // URL da API FastAPI
+        const API_URL = "http://localhost:8000"; 
+
+        async function calcular() {
+            const valor = document.getElementById('valor_original').value;
+            const desconto = document.getElementById('desconto').value;
+            const is_vip = document.getElementById('is_vip').value === "true";
+
+            try {
+                const response = await fetch(`${API_URL}/calcular`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        valor_original: parseFloat(valor), 
+                        desconto_percentual: parseFloat(desconto), 
+                        is_vip: is_vip 
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById('resultado').innerText = `R$ ${data.cashback.toFixed(2)}`;
+                carregarHistorico();
+            } catch (error) {
+                alert("Erro ao conectar com a API. Verifique se o uvicorn está rodando!");
+            }
+        }
+
+        async function carregarHistorico() {
+            try {
+                const response = await fetch(`${API_URL}/historico`);
+                const historico = await response.json();
+                
+                const lista = document.getElementById('historico');
+                lista.innerHTML = "";
+                historico.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerText = `Cliente ${item.tipo_cliente} | Compra: R$ ${item.valor_compra} | Cashback: R$ ${item.cashback_gerado}`;
+                    lista.appendChild(li);
+                });
+            } catch (error) {
+                console.log("Aguardando API para carregar histórico...");
+            }
+        }
+
+        // Carregar histórico ao abrir a página
+        carregarHistorico();
+    </script>
+</body>
+</html>
