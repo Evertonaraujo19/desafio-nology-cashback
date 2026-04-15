@@ -4,9 +4,9 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.orm import declarative_base, sessionmaker
 from fastapi.middleware.cors import CORSMiddleware
 
-# Banco de dados local para testes
-DATABASE_URL = "sqlite:///./test.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# Banco de dados de Produção (Supabase)
+DATABASE_URL = "postgresql://postgres:Shaukan@1910@db.hvcdjptgrxatvrnrehhu.supabase.co:5432/postgres"
+engine = create_engine(DATABASE_URL) # Tiramos o connect_args
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
